@@ -66,7 +66,7 @@ def install_docker():
 
     print('Docker compose version "{}"'.format(DOCKER_COMPOSE_VERSION))
     print('Full list of docker-compose versions you can find here -> https://github.com/docker/compose/releases\n')
-    print('\nInstall will start in {} seconds'.format(ARG.delay)
+    print('\nInstall will start in {} seconds'.format(ARG.delay))
     time.sleep(ARG.delay)
 
     for cmd in cmd_list:
