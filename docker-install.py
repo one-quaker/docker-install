@@ -15,9 +15,9 @@ if platform.python_version()[0] == '2':
 
 
 parser = argparse.ArgumentParser(description='Docker install script')
-parser.add_argument('--force', '-f', action='store_true', default=False)
 parser.add_argument('--curl', action='store_true', default=False)
 parser.add_argument('--install', '-i', type=str, choices=['all', 'compose'], default='all')
+parser.add_argument('--delay', '-d', type=int, default=5)
 parser.add_argument('--compose-version', '-c', type=str, default='1.24.1')
 
 
@@ -27,15 +27,6 @@ ARG = parser.parse_args()
 if ARG.curl:
     print('curl https://raw.githubusercontent.com/one-quaker/docker-install/master/docker-install.py | python3 -')
     sys.exit(0)
-
-
-def user_input():
-    while True:
-        answer = input('\nContinue? (y/n) ')
-        if answer.lower() in ('y', 'yes'):
-            return True
-        elif answer.lower() in ('n', 'no'):
-            sys.exit(1)
 
 
 def install_docker():
@@ -72,11 +63,11 @@ def install_docker():
         cmd_list += docker_list + compose_list
 
     print('\n'.join(cmd_list))
-    if not ARG.force:
-        user_input()
-        print('Docker compose version "{}"'.format(DOCKER_COMPOSE_VERSION))
-        print('Full list of docker-compose versions you can find here -> https://github.com/docker/compose/releases')
-        time.sleep(5)
+
+    print('Docker compose version "{}"'.format(DOCKER_COMPOSE_VERSION))
+    print('Full list of docker-compose versions you can find here -> https://github.com/docker/compose/releases\n')
+    print('\nInstall will start in {} seconds'.format(ARG.delay)
+    time.sleep(ARG.delay)
 
     for cmd in cmd_list:
         out = os.popen(cmd).read()
