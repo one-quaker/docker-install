@@ -2,6 +2,7 @@ import os
 import sys
 import argparse
 import platform
+import time
 
 
 '''
@@ -15,13 +16,15 @@ if platform.python_version()[0] == '2':
 
 parser = argparse.ArgumentParser(description='Docker install script')
 parser.add_argument('--force', '-f', action='store_true', default=False)
-parser.add_argument('--install', '-i', action='store_true', default=False)
+parser.add_argument('--curl', action='store_true', default=False)
+parser.add_argument('--install', '-i', type=str, choices=['all', 'compose'], default='all')
+parser.add_argument('--compose-version', '-c', type=str, default='1.24.1')
 
 
 ARG = parser.parse_args()
 
 
-if ARG.install:
+if ARG.curl:
     print('curl https://raw.githubusercontent.com/one-quaker/docker-install/master/docker-install.py | python3 -')
     sys.exit(0)
 
@@ -36,16 +39,19 @@ def user_input():
 
 
 def install_docker():
-    DOCKER_COMPOSE_VERSION = '1.24.1' # https://github.com/docker/compose/releases
-    UBUNTU_VERSION = os.popen('lsb_release -cs').read().strip()
     USER = os.popen('whoami').read().strip()
     OS = os.popen('uname -s').read().strip()
     CPU_ARCH = os.popen('uname -m').read().strip()
 
+    DOCKER_COMPOSE_VERSION = ARG.compose_version
+    DOCKER_COMPOSE_URL = 'https://github.com/docker/compose/releases/download/{}/docker-compose-{}-{}'.format(DOCKER_COMPOSE_VERSION, OS, CPU_ARCH)
+    UBUNTU_VERSION = os.popen('lsb_release -cs').read().strip()
+
     if UBUNTU_VERSION == 'tessa': # hello linux mint
         UBUNTU_VERSION = 'xenial'
 
-    cmd_list = (
+    cmd_list = ()
+    docker_list = (
         'sudo apt update -y',
         r'sudo apt purge -y docker\*',
         'sudo apt install -y apt-transport-https ca-certificates make wget curl software-properties-common',
@@ -54,13 +60,23 @@ def install_docker():
         'sudo apt update -y',
         'sudo apt install -y docker-ce',
         'sudo usermod -aG docker {}'.format(USER),
-        'curl -L https://github.com/docker/compose/releases/download/{}/docker-compose-{}-{} -o /tmp/docker-compose'.format(DOCKER_COMPOSE_VERSION, OS, CPU_ARCH),
+    )
+    compose_list = (
+        'curl -L {} -o /tmp/docker-compose'.format(DOCKER_COMPOSE_URL),
         'sudo mv -v /tmp/docker-compose /usr/local/bin/docker-compose',
         'chmod +x /usr/local/bin/docker-compose',
     )
+    if ARG.install == 'compose':
+        cmd_list += compose_list
+    else:
+        cmd_list += docker_list + compose_list
 
     print('\n'.join(cmd_list))
-    if not ARG.force: user_input()
+    if not ARG.force:
+        user_input()
+        print('Docker compose version "{}"'.format(DOCKER_COMPOSE_VERSION))
+        print('Full list of docker-compose versions you can find here -> https://github.com/docker/compose/releases')
+        time.sleep(5)
 
     for cmd in cmd_list:
         out = os.popen(cmd).read()
