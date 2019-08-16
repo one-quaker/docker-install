@@ -5,9 +5,7 @@ import platform
 
 
 '''
-docker+docker-compose install script for ubuntu linux.
-Install docker in one command:
-sh -c "$(wget https://raw.githubusercontent.com/one-quaker/python_start/master/install_docker.sh -O -)"
+docker+docker-compose install script for ubuntu linux
 '''
 
 if platform.python_version()[0] == '2':
@@ -17,9 +15,15 @@ if platform.python_version()[0] == '2':
 
 parser = argparse.ArgumentParser(description='Docker install script')
 parser.add_argument('--force', '-f', action='store_true', default=False)
+parser.add_argument('--install', '-i', action='store_true', default=False)
 
 
 ARG = parser.parse_args()
+
+
+if ARG.install:
+    print('curl https://raw.githubusercontent.com/one-quaker/docker-install/master/docker-install.py | python3 -')
+    sys.exit(0)
 
 
 def user_input():
