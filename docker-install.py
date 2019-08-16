@@ -17,7 +17,7 @@ if platform.python_version()[0] == '2':
 parser = argparse.ArgumentParser(description='Docker install script')
 parser.add_argument('--curl', action='store_true', default=False)
 parser.add_argument('--install', '-i', type=str, choices=['all', 'compose'], default='all')
-parser.add_argument('--delay', '-d', type=int, default=5)
+parser.add_argument('--delay', '-d', type=int, default=10)
 parser.add_argument('--compose-version', '-c', type=str, default='1.24.1')
 
 
