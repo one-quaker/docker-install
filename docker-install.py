@@ -27,16 +27,14 @@ parser.add_argument('--compose-version', '-c', type=str, default='1.24.1')
 ARG = parser.parse_args()
 
 
-if ARG.curl:
-    print('curl https://raw.githubusercontent.com/one-quaker/docker-install/master/docker-install.py | python3 -')
-    sys.exit(0)
-
-
 if ARG.verbose:
     print('User: {user}\nUser UID and GUID: {user_uid}\ndocker-compose version: {compose_version}'.format(**ARG.__dict__))
 
 
-if os.getegid() != 0:
+if ARG.curl:
+    print('curl https://raw.githubusercontent.com/one-quaker/docker-install/master/docker-install.py | python3 -')
+    sys.exit(0)
+elif os.getegid() != 0:
     print('run as root user')
     sys.exit(0)
 
