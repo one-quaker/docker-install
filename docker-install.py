@@ -31,7 +31,7 @@ if ARG.curl:
     sys.exit(0)
 
 
-if os.getegid() =! 0:
+if os.getegid() != 0:
     print('run as root user')
     sys.exit(0)
 
