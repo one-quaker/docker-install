@@ -17,6 +17,8 @@ if platform.python_version()[0] == '2':
 parser = argparse.ArgumentParser(description='Docker install script')
 parser.add_argument('--curl', action='store_true', default=False)
 parser.add_argument('--install', '-i', type=str, choices=['all', 'compose'], default='all')
+parser.add_argument('--user', '-u', type=str, default='docker-user')
+parser.add_argument('--user-uid', '-U', type=int, default=5000)
 parser.add_argument('--delay', '-d', type=int, default=10)
 parser.add_argument('--compose-version', '-c', type=str, default='1.24.1')
 
@@ -29,8 +31,13 @@ if ARG.curl:
     sys.exit(0)
 
 
+if os.getegid() =! 0:
+    print('run as root user')
+    sys.exit(0)
+
+
 def install_docker():
-    USER = os.popen('whoami').read().strip()
+    USER = ARG.user
     OS = os.popen('uname -s').read().strip()
     CPU_ARCH = os.popen('uname -m').read().strip()
 
@@ -50,6 +57,7 @@ def install_docker():
         'echo \"deb [arch=amd64] https://download.docker.com/linux/ubuntu {} stable\" | sudo tee /etc/apt/sources.list.d/docker.list'.format(UBUNTU_VERSION),
         'sudo apt update -y',
         'sudo apt install -y docker-ce',
+        'sudo useradd -m -s /bin/bash -u {uid} -U {user}'.format(uid=ARG.user_uid, user=USER),
         'sudo usermod -aG docker {}'.format(USER),
     )
     compose_list = (
