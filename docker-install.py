@@ -20,6 +20,7 @@ parser.add_argument('--install', '-i', type=str, choices=['all', 'compose'], def
 parser.add_argument('--user', '-u', type=str, default='docker-user')
 parser.add_argument('--user-uid', '-U', type=int, default=5000)
 parser.add_argument('--delay', '-d', type=int, default=10)
+parser.add_argument('--verbose', '-v', action='store_true')
 parser.add_argument('--compose-version', '-c', type=str, default='1.24.1')
 
 
@@ -29,6 +30,10 @@ ARG = parser.parse_args()
 if ARG.curl:
     print('curl https://raw.githubusercontent.com/one-quaker/docker-install/master/docker-install.py | python3 -')
     sys.exit(0)
+
+
+if ARG.verbose:
+    print('User: {user}\nUser UID and GUID: {user_uid}\ndocker-compose version: {compose_version}'.format(**ARG.__dict__))
 
 
 if os.getegid() != 0:
