@@ -21,7 +21,7 @@ parser.add_argument('--user', '-u', type=str, default='docker-user')
 parser.add_argument('--user-uid', '-U', type=int, default=5000)
 parser.add_argument('--delay', '-d', type=int, default=10)
 parser.add_argument('--verbose', '-v', action='store_true')
-parser.add_argument('--compose-version', '-c', type=str, default='1.24.1')
+parser.add_argument('--compose-version', '-c', type=str, default='1.25.4')
 
 
 ARG = parser.parse_args()
